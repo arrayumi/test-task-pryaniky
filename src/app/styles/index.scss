@@ -1,0 +1,21 @@
+@use "vars" as *;
+
+body {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+  // font-family: $primary-ff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: $primary-white;
+  scrollbar-gutter: stable;
+
+  background-color: $background-dark;
+}
+
+#root {
+  display: flex;
+  flex: 1;
+}
