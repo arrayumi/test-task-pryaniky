@@ -5,13 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { AnonymousRoute } from "./routes/AnonymousRoute";
 
+import { getUserData } from "./store/selectors";
+
 function App() {
   // const dispatch = useDispatch();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { isAuthorized } = useSelector(getUserData);
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  // }, []);
+  }, []);
 
   return (
     <Routes>
@@ -21,10 +24,7 @@ function App() {
           element={<AnonymousRoute element={page.SignInPage} />}
         />
       </Route>
-      <Route
-        path="/"
-        element={<ProtectedRoute element={page.Main} />}
-      ></Route>
+      <Route path="/" element={<ProtectedRoute element={page.Main} />}></Route>
     </Routes>
   );
 }

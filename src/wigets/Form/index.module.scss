@@ -1,0 +1,16 @@
+@use "../../app/styles/vars" as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  padding: 50px;
+  border-radius: 10px;
+  background-color: $primary-white;
+  color: $primary-black;
+
+  button {
+    margin-top: 30px;
+  }
+}
