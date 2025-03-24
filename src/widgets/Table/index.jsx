@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Table as T,
   TableBody,
@@ -56,11 +56,7 @@ export default function Table() {
   };
 
   const handleSaveClick = (index) => {
-    console.log();
     dispatch(editTableRow({index: index, row: editedRow}));
-    // const updatedData = [...tableData];
-    // updatedData[index] = editedRow;
-    // setTableData(updatedData);
     setEditIndex(-1);
   };
 

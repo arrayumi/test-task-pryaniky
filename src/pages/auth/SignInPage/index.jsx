@@ -1,4 +1,4 @@
-import Form from "../../../wigets/Form";
+import Form from "../../../widgets/Form";
 import styles from "./index.module.scss";
 
 import { useDispatch, useSelector } from "react-redux";

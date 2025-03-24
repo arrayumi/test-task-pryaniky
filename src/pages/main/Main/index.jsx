@@ -1,5 +1,5 @@
 import styles from "./index.module.scss";
-import Table from "../../../wigets/Table";
+import Table from "../../../widgets/Table";
 
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";

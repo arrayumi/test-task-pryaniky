@@ -1,21 +1,9 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
 import * as page from "../pages";
-import { useDispatch, useSelector } from "react-redux";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { AnonymousRoute } from "./routes/AnonymousRoute";
 
-import { getUserData } from "./store/selectors";
-
 function App() {
-  // const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { isAuthorized } = useSelector(getUserData);
-
-  useEffect(() => {
-
-  }, []);
-
   return (
     <Routes>
       <Route path="/auth">
