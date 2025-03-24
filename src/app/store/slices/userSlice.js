@@ -13,8 +13,7 @@ export const login = createAsyncThunk(
     try {
       const res = await api.login(data);
       console.log(res);
-      localStorage.setItem("access", res.data.access);
-      // dispatch(loadUserData());
+      localStorage.setItem("access", res.data.data.token);
     } catch (err) {
       const errorData = {
         message: err.response.data.detail,

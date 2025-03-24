@@ -3,6 +3,7 @@ import styles from "./index.module.scss";
 
 import { useDispatch, useSelector } from "react-redux";
 import { getUserData } from "../../../app/store/selectors";
+import { login } from "../../../app/store/slices/userSlice";
 
 import * as ui from "../../../shared/ui";
 import Alert from "@mui/material/Alert";
@@ -13,9 +14,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { schemas } from "../../../app/validation";
 
 export const SignInPage = () => {
+  const dispatch = useDispatch();
   const { errMessage } = useSelector(getUserData);
 
   const {
+    handleSubmit,
     register,
     formState: { errors, isValid, isSubmitting },
   } = useForm({
@@ -23,9 +26,13 @@ export const SignInPage = () => {
     mode: "onChange",
   });
 
+  const handleLogin = (data) => {
+    dispatch(login(data));
+  };
+
   return (
     <div className={styles.page}>
-      <Form title="Sign in">
+      <Form title="Sign in" onSubmit={handleSubmit(handleLogin)}>
         <ui.Input
           label="username"
           {...register("username")}
@@ -38,7 +45,7 @@ export const SignInPage = () => {
           error={errors.password}
           helperText={errors.password?.message}
         />
-        <ui.Button variant="contained" disabled={!isValid || isSubmitting}>
+        <ui.Button type="submit" variant="contained" disabled={!isValid || isSubmitting}>
           Sign in
         </ui.Button>
         {errMessage && (
