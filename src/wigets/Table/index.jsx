@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table as T,
   TableBody,
@@ -11,6 +11,8 @@ import {
   Paper,
   Typography,
   IconButton,
+  Box,
+  CircularProgress,
 } from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -19,9 +21,16 @@ import CheckIcon from "@mui/icons-material/Check";
 
 import { TABLE_ROW_DATA, DEFAULT_FIELDS } from "../../app/constants";
 
+import { useSelector, useDispatch } from "react-redux";
+import { getTableData } from "../../app/store";
+import {
+  addTableRow,
+  deleteTableRow,
+  editTableRow,
+} from "../../app/store/slices/tableSlice";
+
 const formatDate = (date) => {
   date = date.split("T");
-  console.log(date[0]);
   return date[0];
 };
 
@@ -30,18 +39,8 @@ const isButtonDisabled = (row) => {
 };
 
 export default function Table() {
-  const [data, setData] = useState([
-    {
-      companySigDate: "2022-12-23T11:19:27.017Z",
-      companySignatureName: "test",
-      documentName: "test",
-      documentStatus: "test",
-      documentType: "test",
-      employeeNumber: "test",
-      employeeSigDate: "2022-12-23T11:19:27.017Z",
-      employeeSignatureName: "test",
-    },
-  ]);
+  const { tableData, isPending } = useSelector(getTableData);
+  const dispatch = useDispatch();
 
   const [editIndex, setEditIndex] = useState(-1);
   const [editedRow, setEditedRow] = useState({});
@@ -53,13 +52,15 @@ export default function Table() {
 
   const handleEditClick = (index) => {
     setEditIndex(index);
-    setEditedRow(data[index]);
+    setEditedRow(tableData[index]);
   };
 
   const handleSaveClick = (index) => {
-    const updatedData = [...data];
-    updatedData[index] = editedRow;
-    setData(updatedData);
+    console.log();
+    dispatch(editTableRow({index: index, row: editedRow}));
+    // const updatedData = [...tableData];
+    // updatedData[index] = editedRow;
+    // setTableData(updatedData);
     setEditIndex(-1);
   };
 
@@ -74,37 +75,37 @@ export default function Table() {
   };
 
   const handleAddRow = () => {
-    let { companySigDate, employeeSigDate } = newRow;
-    companySigDate = new Date(companySigDate);
-    employeeSigDate = new Date(employeeSigDate);
-
-    setData([
-      ...data,
-      {
-        companySigDate: companySigDate.toISOString(),
-        companySignatureName: newRow.companySignatureName,
-        documentName: newRow.documentName,
-        documentStatus: newRow.documentStatus,
-        documentType: newRow.documentType,
-        employeeNumber: newRow.employeeNumber,
-        employeeSigDate: employeeSigDate.toISOString(),
-        employeeSignatureName: newRow.employeeSignatureName,
-      },
-    ]);
+    dispatch(addTableRow(newRow));
     setNewRow(DEFAULT_FIELDS);
   };
 
-  const handleDeleteClick = (index) => {
-    const updatedData = data.filter((_, i) => i !== index);
-    setData(updatedData);
+  const handleDeleteRow = (id) => {
+    dispatch(deleteTableRow(id));
   };
 
   return (
-    <Paper>
+    <Paper sx={{ padding: "30px" }}>
       <Typography variant="h4" gutterBottom style={{ padding: "16px" }}>
-        Editable Table
+        Table for pryaniky.com
       </Typography>
-      <TableContainer>
+      <TableContainer sx={{ position: "relative" }}>
+        {isPending && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "0",
+              left: "0",
+              bottom: "0",
+              width: "100%",
+              zIndex: "5",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
         <T stickyHeader>
           <TableHead>
             <TableRow>
@@ -115,66 +116,76 @@ export default function Table() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row, rowIndex) => {
-              const cells = Object.entries(row);
-              return (
-                <TableRow key={rowIndex}>
-                  {cells.map((cell, cellIndex) => (
-                    <TableCell
-                      key={cellIndex}
-                      sx={{ fontSize: "14px", maxWidth: "50px" }}
-                    >
-                      {console.log(cell[0], editedRow[cell[0]])}
-                      {editIndex === rowIndex ? (
-                        <TextField
-                          type={cell[0].endsWith("Date") ? "date" : "text"}
-                          variant="standard"
-                          sx={{
-                            "& .MuiInputBase-input": {
-                              fontSize: "14px",
-                            },
-                          }}
-                          name={cell[0]}
-                          value={
-                            cell[0].endsWith("Date")
-                              ? formatDate(editedRow[cell[0]])
-                              : editedRow[cell[0]]
-                          }
-                          onChange={handleChange}
-                        />
-                      ) : (
-                        displayCellData(cell)
-                      )}
-                    </TableCell>
-                  ))}
+            {tableData.length > 0 ? (
+              tableData.map((row, rowIndex) => {
+                const cells = Object.entries(row).slice(1);
+                return (
+                  <TableRow key={rowIndex}>
+                    {cells.map((cell, cellIndex) => (
+                      <TableCell
+                        key={cellIndex}
+                        sx={{ fontSize: "14px", maxWidth: "50px" }}
+                      >
+                        {editIndex === rowIndex ? (
+                          <TextField
+                            type={cell[0].endsWith("Date") ? "date" : "text"}
+                            variant="standard"
+                            sx={{
+                              "& .MuiInputBase-input": {
+                                fontSize: "14px",
+                              },
+                            }}
+                            name={cell[0]}
+                            value={
+                              cell[0].endsWith("Date")
+                                ? formatDate(editedRow[cell[0]])
+                                : editedRow[cell[0]]
+                            }
+                            onChange={handleChange}
+                          />
+                        ) : (
+                          displayCellData(cell)
+                        )}
+                      </TableCell>
+                    ))}
 
-                  <TableCell style={{ display: "flex", gap: "5px" }}>
-                    {editIndex === rowIndex ? (
+                    <TableCell style={{ display: "flex", gap: "5px" }}>
+                      {editIndex === rowIndex ? (
+                        <IconButton
+                          aria-label="save"
+                          onClick={() => handleSaveClick(rowIndex)}
+                          disabled={isButtonDisabled(editedRow)}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      ) : (
+                        <IconButton
+                          aria-label="edit"
+                          onClick={() => handleEditClick(rowIndex)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      )}
                       <IconButton
-                        aria-label="save"
-                        onClick={() => handleSaveClick(rowIndex)}
-                        disabled={isButtonDisabled(editedRow)}
+                        aria-label="delete"
+                        onClick={() => handleDeleteRow(row.id)}
                       >
-                        <CheckIcon />
+                        <DeleteIcon />
                       </IconButton>
-                    ) : (
-                      <IconButton
-                        aria-label="edit"
-                        onClick={() => handleEditClick(rowIndex)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    )}
-                    <IconButton
-                      aria-label="delete"
-                      onClick={() => handleDeleteClick(rowIndex)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            ) : (
+              <TableRow sx={{ width: "100%", textAlign: "center" }}>
+                <TableCell
+                  colSpan={9}
+                  style={{ textAlign: "center", backgroundColor: "#f0f0f0" }}
+                >
+                  <div> No data yet.</div>
+                </TableCell>
+              </TableRow>
+            )}
             <TableRow>
               {TABLE_ROW_DATA.map((cell, index) => {
                 return (

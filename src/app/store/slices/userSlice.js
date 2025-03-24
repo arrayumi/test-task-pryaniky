@@ -38,7 +38,6 @@ const userSlice = createSlice({
       state.isPageLoading = action.payload;
     },
     logout(state) {
-      // Added a logout reducer to support logging out the user
       console.log("logout");
       state.isAuthorized = false;
       localStorage.removeItem("access");

@@ -31,7 +31,7 @@ export const SignInPage = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <main className={styles.page}>
       <Form title="Sign in" onSubmit={handleSubmit(handleLogin)}>
         <ui.Input
           label="username"
@@ -54,6 +54,6 @@ export const SignInPage = () => {
           </Alert>
         )}
       </Form>
-    </div>
+    </main>
   );
 };
