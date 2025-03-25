@@ -3,7 +3,7 @@
 ## Stack: 
 JavaScript, React, Redux, Axios, Material UI, React hook form + zod
 
-## Details:
+## Task:
 
 Использование React обязательно. 
 
