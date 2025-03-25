@@ -1,7 +1,7 @@
 # Реализовать небольшое SPA-приложение взаимодействующее с сервером.
 
 ## Stack: 
-JavaScript, React, Redux, Axios, React hook form + zod
+JavaScript, React, Redux, Axios, Material UI, React hook form + zod
 
 ## Details:
 
